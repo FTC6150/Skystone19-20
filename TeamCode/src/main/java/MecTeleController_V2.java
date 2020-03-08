@@ -16,7 +16,7 @@ public class MecTeleController_V2 extends OpMode
     private boolean grabberBTNReleased = true;
     private boolean indexingBTNReleased = true;
     private boolean wristFollow = false;
-    private boolean shoulderMoved;
+    private double shoulderMoved;
     private double lastShoulderPosition = 0;
 
     public void init()
@@ -157,11 +157,11 @@ public class MecTeleController_V2 extends OpMode
             //if (armPower == 0)
             //{
             //    telemetry.addData("not moving either, adj dir", null);
-                shoulderMoved = holo.AdjDir();
-                if (shoulderMoved)
+                shoulderMoved = holo.AdjDir(shoulderPosition_ENC);
+                if (shoulderMoved != 0)
                 {
                     wristFollow = true;
-                    lastShoulderPosition = shoulderPosition_ENC;
+                    lastShoulderPosition = shoulderMoved;
                 }
             //}
         }

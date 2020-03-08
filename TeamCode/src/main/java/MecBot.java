@@ -612,7 +612,7 @@ public class MecBot
         double shoulderPos = getShoulderPosition();
         int extCloseEnough = 5;
         int shoulderCloseEnough = 5;
-        final int shoulderLevels[] = {0, -175, -274, -375, -463, -540, -613, -647};
+        final int shoulderLevels[] = {0, -175, -300, -390, -463, -540, -613, -647};//-300 was -274 and -390 was -375
         final int extLevels[] = {0, -140, -140, -203, -276, -414, -676, -900};
         currentLvl += adjLevels;
         if (currentLvl < 0)
@@ -652,14 +652,14 @@ public class MecBot
             extDirection = directions.Stop;
         }
     }
-    public boolean AdjDir()
+    public double AdjDir(double shoulderInPos)
     {
         double extPos = getArmPosition();
         double shoulderPos = getShoulderPosition();
         int extCloseEnough = 5;
         int shoulderCloseEnough = 5;
         int shoulderHorizontal = -280;
-        boolean shoulderMoved = false;
+        double shoulderMoved;
         if (shoulderDirection == directions.Up)
         {
             if (shoulderPos > shoulderTargetPos+shoulderCloseEnough)
@@ -672,7 +672,7 @@ public class MecBot
                 {
                     setShoulderPower(-.4);
                 }
-                shoulderMoved = true;
+                //shoulderMoved = true;
             }
             else
             {
@@ -684,8 +684,8 @@ public class MecBot
         {
             if (shoulderPos < shoulderTargetPos-shoulderCloseEnough)
             {
-                setShoulderPower(-.05);
-                shoulderMoved = true;
+                setShoulderPower(-.1);
+                //shoulderMoved = true;
             }
             else
             {
@@ -716,6 +716,11 @@ public class MecBot
                 extDirection = directions.Stop;
                 setArmPower(0);
             }
+        }
+        shoulderMoved = getShoulderPosition()-shoulderInPos;
+        if (shoulderMoved != 0)
+        {
+            shoulderMoved = shoulderTargetPos;
         }
         return shoulderMoved;
     }
