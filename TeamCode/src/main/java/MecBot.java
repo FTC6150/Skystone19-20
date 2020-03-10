@@ -612,8 +612,8 @@ public class MecBot
         double shoulderPos = getShoulderPosition();
         int extCloseEnough = 5;
         int shoulderCloseEnough = 5;
-        final int shoulderLevels[] = {0, -175, -300, -390, -463, -540, -613, -647};//-300 was -274 and -390 was -375
-        final int extLevels[] = {0, -140, -140, -203, -276, -414, -676, -900};
+        final int shoulderLevels[] = {-40, -190, -300, -400, -470, -540, -630, -650};//-300 was -274 and -390 was -375
+        final int extLevels[] = {-10, -140, -140, -203, -276, -437, -676, -900};
         currentLvl += adjLevels;
         if (currentLvl < 0)
         {
@@ -659,20 +659,20 @@ public class MecBot
         int extCloseEnough = 5;
         int shoulderCloseEnough = 5;
         int shoulderHorizontal = -280;
-        double shoulderMoved;
+        double shoulderPosition = shoulderInPos;
         if (shoulderDirection == directions.Up)
         {
             if (shoulderPos > shoulderTargetPos+shoulderCloseEnough)
             {
-                if (shoulderPos < shoulderHorizontal) //less then horizontal is above horizontal on robot
-                {
-                    setShoulderPower(-.6);
-                }
-                else
-                {
-                    setShoulderPower(-.4);
-                }
-                //shoulderMoved = true;
+                //if (shoulderPos < shoulderHorizontal) //less then horizontal is above horizontal on robot
+                //{
+                    setShoulderPower(-.8);
+                //}
+                //else
+                //{
+                //    setShoulderPower(-.4);
+                //}
+                shoulderPosition = shoulderTargetPos;
             }
             else
             {
@@ -685,7 +685,7 @@ public class MecBot
             if (shoulderPos < shoulderTargetPos-shoulderCloseEnough)
             {
                 setShoulderPower(-.1);
-                //shoulderMoved = true;
+                shoulderPosition = shoulderTargetPos;
             }
             else
             {
@@ -693,7 +693,14 @@ public class MecBot
                 setShoulderPower(0);
             }
         }
-
+        else if (shoulderPos > shoulderTargetPos)
+        {
+            setShoulderPower(-0.6);
+        }
+        else
+        {
+            setShoulderPower(0);
+        }
         if (extDirection == directions.Up)
         {
             if (extPos > extTargetPos+extCloseEnough)
@@ -717,16 +724,11 @@ public class MecBot
                 setArmPower(0);
             }
         }
-        shoulderMoved = getShoulderPosition()-shoulderInPos;
-        if (shoulderMoved != 0)
-        {
-            shoulderMoved = shoulderTargetPos;
-        }
-        return shoulderMoved;
+        return shoulderPosition;
     }
+
     public boolean isIndexing(Telemetry telemetry)
     {
-        boolean indexing = true;
         telemetry.addLine("shoulder:");
         telemetry.addData("p: ", getShoulderPosition());
         telemetry.addData("t: ", shoulderTargetPos);
@@ -738,9 +740,9 @@ public class MecBot
         telemetry.update();
         if (shoulderDirection == directions.Stop && extDirection == directions.Stop)
         {
-            indexing = false;
+            return false;
         }
-        return indexing;
+        return true;
     }
     public void cancelIndex ()
     {
