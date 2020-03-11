@@ -15,6 +15,8 @@ public class MecTeleController_V2 extends OpMode
     private boolean grabberDeployed = false;
     private boolean grabberBTNReleased = true;
     private boolean indexingBTNReleased = true;
+    private boolean capServoUp = true;
+    private boolean capServoBTNReleased = true;
     private boolean wristFollow = false;
     private double lastShoulderPosition = 500;
 
@@ -163,7 +165,7 @@ public class MecTeleController_V2 extends OpMode
         }
         else if(shoulderPosition_ENC > lastShoulderPosition)
         {
-            holo.setShoulderPower(-0.5);//was -.24
+            holo.supportShoulder();
             telemetry.addData("Location of Motion: ", "Gravity Boost");
         }
         else
@@ -183,17 +185,17 @@ public class MecTeleController_V2 extends OpMode
         }
         else if (gamepad2.right_bumper) //wrist code from last year
         {
-            wristPosition -= .0038;
+            wristPosition -= .0057; //was .0038
             wristFollow = false;
             holo.cancelIndex();
         }
         else if (gamepad2.right_trigger > .2f)
         {
-            wristPosition += .0038;
+            wristPosition += .0057;
             wristFollow = false;
             holo.cancelIndex();
         }
-        if (wristFollow)
+        else if (wristFollow)
         {
             if (shoulderPower_PCT > 0)
             {
@@ -225,6 +227,20 @@ public class MecTeleController_V2 extends OpMode
         else if (!gamepad1.a)
         {
             grabberBTNReleased = true;
+        }
+
+        if (gamepad1.y)
+        {
+            if (capServoBTNReleased)
+            {
+                holo.dropCapServo(capServoUp);
+                capServoUp = !capServoUp;
+                capServoBTNReleased = false;
+            }
+        }
+        else
+        {
+            capServoBTNReleased = true;
         }
         // Arm clamp Controls
 

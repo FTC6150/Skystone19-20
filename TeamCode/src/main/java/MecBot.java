@@ -26,7 +26,7 @@ public class MecBot
 
         private OpMode systemAccess; //need access to telemetry (OpMode) and sometimes sleep (LinearOpMode)
         private DistanceSensor frontDistSens, rightDistSens, leftDistSens;
-        private Servo rightGrabServo, leftGrabServo, wristServo, clampServo;
+        private Servo rightGrabServo, leftGrabServo, wristServo, clampServo, capServo;
         RevBlinkinLedDriver lights;
         Orientation angles;
         Acceleration gravity;
@@ -102,6 +102,10 @@ public class MecBot
             wristServo = hMap.servo.get("wristServo");
             wristServo.setDirection(Servo.Direction.FORWARD);
             wristServo.setPosition(0.0);
+
+            capServo = hMap.servo.get("capServo");
+            capServo.setDirection(Servo.Direction.FORWARD);
+            capServo.setPosition(0.5);
 
             driveRightFront.setDirection(DcMotorSimple.Direction.FORWARD);
             driveRightBack.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -695,7 +699,7 @@ public class MecBot
         }
         else if (shoulderPos > shoulderTargetPos)
         {
-            setShoulderPower(-0.6);
+            supportShoulder();
         }
         else
         {
@@ -748,6 +752,22 @@ public class MecBot
     {
         shoulderDirection = directions.Stop;
         extDirection = directions.Stop;
+    }
+    public void  supportShoulder()
+    {
+        double armPos = getArmPosition();
+        if (armPos > -150)
+        {
+            setShoulderPower(-0.3);//was -.24
+        }
+        else if (armPos < -300)
+        {
+            setShoulderPower(-0.6);//was -.24
+        }
+        else
+        {
+            setShoulderPower(armPos*0.002);//was -.24
+        }
     }
     public void wristDown (LinearOpMode linearOpMode)
     {
@@ -829,6 +849,17 @@ public class MecBot
             {
                 clampServo.setPosition(1.0);
             }
+    }
+    public void dropCapServo(boolean drop)
+    {
+        if (drop)
+        {
+            capServo.setPosition(1);
+        }
+        else
+        {
+            capServo.setPosition(0.5);
+        }
     }
     /*public void pivot_IMU(float degrees_IN)
     {
